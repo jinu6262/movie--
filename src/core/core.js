@@ -51,3 +51,27 @@ export function createRouter(routes) {
         routeRender(routes);
     };
 } //함수를 내보내고있다
+
+
+
+
+////// Store
+
+export class Store {
+    constructor(state) {
+        this.state={}
+        this.observers={}
+        for(const key in state ){
+            Object.defineProperty(this.state, key,{
+                get: ()=> state[key],
+                set: val=>{ 
+                    state[key] = val
+                    this.observers[key]()
+                }
+            })
+        }
+    }
+    subscribe(key, cb) {
+        this.observers[key] = cb
+    }
+}
