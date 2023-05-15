@@ -52,26 +52,23 @@ export function createRouter(routes) {
     };
 } //함수를 내보내고있다
 
-
-
-
 ////// Store
 
 export class Store {
     constructor(state) {
-        this.state={}
-        this.observers={}
-        for(const key in state ){
-            Object.defineProperty(this.state, key,{
-                get: ()=> state[key],
-                set: val=>{ 
-                    state[key] = val
-                    this.observers[key]()
-                }
-            })
+        this.state = {};
+        this.observers = {};
+        for (const key in state) {
+            Object.defineProperty(this.state, key, {
+                get: () => state[key],
+                set: (val) => {
+                    state[key] = val;
+                    this.observers[key].forEach((observer) => observer(val));
+                },
+            });
         }
     }
     subscribe(key, cb) {
-        this.observers[key] = cb
+        Array.isArray(this.observers[key]) ? this.observers[key].push(cb) : (this.observers[key] = [cb]);
     }
 }
